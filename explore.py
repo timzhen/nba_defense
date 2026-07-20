@@ -49,9 +49,9 @@ df_matchup = matchup.get_data_frames()[0]
 df_matchup['MATCHUP_MIN_NUM'] = df_matchup['MATCHUP_MIN'].apply(
     lambda x: int(x.split(':')[0]) + int(x.split(':')[1])/60
 )
-df_matchup_filter = df_matchup[(df_matchup['GP'] >= 3) & (df_matchup['MATCHUP_MIN_NUM'] >= 20)]
-print(df_matchup.columns.tolist())
-print(df_matchup_filter.head(20))
-print(df_matchup_filter.sort_values(['MATCHUP_FG_PCT'], ascending = True).head(20)[['OFF_PLAYER_NAME','DEF_PLAYER_NAME', 'MATCHUP_MIN', 'PLAYER_PTS', 'MATCHUP_FG_PCT', 'MATCHUP_FG3_PCT', 'HELP_FG_PERC']])
+# df_matchup_filter = df_matchup[(df_matchup['GP'] >= 3) & (df_matchup['MATCHUP_MIN_NUM'] >= 20)]
+# print(df_matchup.columns.tolist())
+# print(df_matchup_filter.head(20))
+# print(df_matchup_filter.sort_values(['MATCHUP_FG_PCT'], ascending = True).head(20)[['OFF_PLAYER_NAME','DEF_PLAYER_NAME', 'MATCHUP_MIN', 'PLAYER_PTS', 'MATCHUP_FG_PCT', 'MATCHUP_FG3_PCT', 'HELP_FG_PERC']])
 
-df_matchup_filter.to_csv('data/matchup_stats.csv', index = False)
+df_matchup.to_csv('data/matchup_stats.csv', index = False)
