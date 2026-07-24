@@ -49,4 +49,4 @@ df_merge = df_merge.rename(columns = {
 
 # print(df_merge[['PLAYER_NAME', 'BLK', 'CONTESTED_SHOTS_2PT', 'avg_fg_pct_allowed']].head(10))
 
-df_merge.to_csv('data/merged_defense_stats', index = False)
+df_merge.to_csv('data/merged_defense_stats.csv', index = False)
