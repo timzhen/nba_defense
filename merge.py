@@ -47,6 +47,10 @@ df_merge = df_merge.rename(columns = {
     'MIN_general': 'MIN'
 })
 
-# print(df_merge[['PLAYER_NAME', 'BLK', 'CONTESTED_SHOTS_2PT', 'avg_fg_pct_allowed']].head(10))
+"""
+print(df_merge[[
+    'PLAYER_NAME', 'BLK', 'CONTESTED_SHOTS_2PT','CONTESTED_SHOTS_3PT', 'avg_fg_pct_allowed'
+    ]].sort_values('CONTESTED_SHOTS_3PT', ascending = False).head(10))
+"""
 
 df_merge.to_csv('data/merged_defense_stats.csv', index = False)
