@@ -27,7 +27,7 @@ def inverted_normalize(column):
 def build_defense_scores(season):
     # --- Fetch ---
     general = leaguedashplayerstats.LeagueDashPlayerStats(
-        season=season,
+        season= season,
         measure_type_detailed_defense='Defense'
     )
     df_general = general.get_data_frames()[0]
@@ -47,6 +47,10 @@ def build_defense_scores(season):
     df_matchup['MATCHUP_MIN_NUM'] = df_matchup['MATCHUP_MIN'].apply(
         lambda x: int(x.split(':')[0]) + int(x.split(':')[1]) / 60
     )
+
+    print(f'  df_general shape: {df_general.shape}')
+    print(f'  df_hustle shape: {df_hustle.shape}')
+    print(f'  df_matchup shape: {df_matchup.shape}')
 
     # --- Merge ---
     df_matchup_grouped = df_matchup.groupby(['DEF_PLAYER_ID', 'DEF_PLAYER_NAME']).agg(
@@ -80,6 +84,12 @@ def build_defense_scores(season):
         'AGE_general': 'AGE',
         'MIN_general': 'MIN'
     })
+
+    print(f'  df_merge shape after merges: {df_merge.shape}')
+    
+    df = df_merge[(df_merge['GP'] >= 40) & (df_merge['MIN'] >= 1500)].copy()
+    
+    print(f'  df shape after GP/MIN filter: {df.shape}')
 
     # --- Normalize & score ---
     df = df_merge[(df_merge['GP'] >= 40) & (df_merge['MIN'] >= 1500)].copy()
@@ -132,7 +142,7 @@ def build_defense_scores(season):
 
 
 # Provide your season list here, e.g. ['2022-23', '2023-24', '2024-25', '2025-26']
-seasons = ['2024-25', '2025-26']
+seasons = ['2024-25']
 
 dfs = []
 for season in seasons:
@@ -140,6 +150,7 @@ for season in seasons:
         print(f'Building defense scores for {season}...')
         df_season = build_defense_scores(season)
         df_season['SEASON'] = season
+        print(f'{season} shape: {df_season.shape}')
         dfs.append(df_season)
     except Exception as e:
         print(f'Warning: failed to build defense scores for {season}: {e}')
@@ -148,7 +159,7 @@ for season in seasons:
 if dfs:
     df_combined = pd.concat(dfs, ignore_index=True)
     print(df_combined.shape)
-    print(df_combined[['SEASON', 'PLAYER_NAME', 'rim_protection_score']].head(20))
+    print(df_combined[['SEASON', 'PLAYER_NAME', 'rim_protection_score', ]].head(20))
 else:
     df_combined = pd.DataFrame()
     print('No seasons processed successfully.')
