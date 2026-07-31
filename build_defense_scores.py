@@ -3,7 +3,7 @@ from nba_api.stats.endpoints import leaguehustlestatsplayer
 from nba_api.stats.endpoints import leagueseasonmatchups
 
 import pandas as pd
-
+import os
 
 # min max scaling
 def normalize(column):
@@ -142,15 +142,26 @@ def build_defense_scores(season):
 
 
 # Provide your season list here, e.g. ['2022-23', '2023-24', '2024-25', '2025-26']
-seasons = ['2024-25']
+seasons = ['2015-16', '2016-17', '2018-19', '2019-20', '2022-23', '2023-24', '2025-26']
 
 dfs = []
 for season in seasons:
+    output_path = f'data/season_{season}.csv'
+
+    if os.path.exists(output_path):
+        print(f'{season} already saved, skipping fetch')
+        df_season = pd.read_csv(output_path)
+        dfs.append(df_season)
+        continue
+
     try:
         print(f'Building defense scores for {season}...')
         df_season = build_defense_scores(season)
+        if df_season.empty:
+            print(f'  {season}: got empty result, will need to retry')
+            continue
         df_season['SEASON'] = season
-        print(f'{season} shape: {df_season.shape}')
+        df_season.to_csv(output_path, index=False)  # save immediately on success
         dfs.append(df_season)
     except Exception as e:
         print(f'Warning: failed to build defense scores for {season}: {e}')
@@ -159,7 +170,22 @@ for season in seasons:
 if dfs:
     df_combined = pd.concat(dfs, ignore_index=True)
     print(df_combined.shape)
-    print(df_combined[['SEASON', 'PLAYER_NAME', 'rim_protection_score', ]].head(20))
+
+    # merge in DPOY voting data
+    dpoy_votes = pd.read_csv('data/dpoy_votes.csv')
+    df_combined = df_combined.merge(
+        dpoy_votes,
+        on=['SEASON', 'PLAYER_NAME'],
+        how='left'
+    )
+    df_combined['got_dpoy_votes'] = df_combined['got_dpoy_votes'].fillna(0)
+    print(df_combined['got_dpoy_votes'].value_counts())
+
+    df_combined.to_csv('data/all_seasons_combined.csv', index=False)
 else:
     df_combined = pd.DataFrame()
     print('No seasons processed successfully.')
+
+
+print(df[['rim_protection_score', 'shot_contesting_score', 'ball_disruption_score',
+           'on_ball_matchup_def_score', 'def_reb_score']].isnull().sum())
