@@ -24,6 +24,19 @@ def inverted_normalize(column):
     return score
 
 
+def get_label(percentile):
+    if percentile >= 90:
+        return "Elite"
+    elif percentile >= 70:
+        return "Above Average"
+    elif percentile >= 40:
+        return "Average"
+    elif percentile >= 15:
+        return "Below Average"
+    else:
+        return "Poor"
+
+
 def build_defense_scores(season):
     # --- Fetch ---
     general = leaguedashplayerstats.LeagueDashPlayerStats(
@@ -137,6 +150,18 @@ def build_defense_scores(season):
         df['DREB_score'] * 0.55 +
         df['DEF_BOXOUTS_score'] * 0.45
     )
+
+    df['rim_protection_percentile'] = df['rim_protection_score'].rank(pct=True) * 100
+    df['shot_contesting_percentile'] = df['shot_contesting_score'].rank(pct=True) * 100
+    df['ball_disruption_percentile'] = df['ball_disruption_score'].rank(pct=True) * 100
+    df['on_ball_matchup_def_percentile'] = df['on_ball_matchup_def_score'].rank(pct=True) * 100
+    df['def_reb_percentile'] = df['def_reb_score'].rank(pct=True) * 100
+
+    df['rim_protection_label'] = df['rim_protection_percentile'].apply(get_label)
+    df['shot_contesting_label'] = df['shot_contesting_percentile'].apply(get_label)
+    df['ball_disruption_label'] = df['ball_disruption_percentile'].apply(get_label)
+    df['on_ball_matchup_def_label'] = df['on_ball_matchup_def_percentile'].apply(get_label)
+    df['def_reb_label'] = df['def_reb_percentile'].apply(get_label)
 
     return df
 

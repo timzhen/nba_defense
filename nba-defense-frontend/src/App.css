@@ -216,6 +216,18 @@
   font-variant-numeric: tabular-nums;
 }
 
+.stat-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: #2a333c;
+  color: #C68E4E;
+  white-space: nowrap;
+}
+
 .ask-section {
   margin-top: 8px;
 }

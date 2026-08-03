@@ -29,13 +29,13 @@ function App() {
     }
   }
 
-  const categoryScores = player
+  const stats = player
     ? [
-        { label: 'Rim Protection', score: player.rim_protection_score },
-        { label: 'Shot Contesting', score: player.shot_contesting_score },
-        { label: 'Ball Disruption', score: player.ball_disruption_score },
-        { label: 'On-Ball Matchup', score: player.on_ball_matchup_def_score },
-        { label: 'Defensive Rebounding', score: player.def_reb_score },
+        { label: 'Rim Protection', value: player.rim_protection_score, percentile: player.rim_protection_percentile, badge: player.rim_protection_label },
+        { label: 'Shot Contesting', value: player.shot_contesting_score, percentile: player.shot_contesting_percentile, badge: player.shot_contesting_label },
+        { label: 'Ball Disruption', value: player.ball_disruption_score, percentile: player.ball_disruption_percentile, badge: player.ball_disruption_label },
+        { label: 'On-Ball Matchup', value: player.on_ball_matchup_def_score, percentile: player.on_ball_matchup_def_percentile, badge: player.on_ball_matchup_def_label },
+        { label: 'Defensive Rebounding', value: player.def_reb_score, percentile: player.def_reb_percentile, badge: player.def_reb_label },
       ]
     : []
 
@@ -69,16 +69,14 @@ function App() {
           <p className="player-team">Team: {player.team}</p>
 
           <div className="stat-sheet">
-            {categoryScores.map(({ label, score }) => (
-              <div className="stat-row" key={label}>
-                <span className="stat-label">{label}</span>
+            {stats.map((stat) => (
+              <div className="stat-row" key={stat.label}>
+                <span className="stat-label">{stat.label}</span>
                 <div className="stat-bar-track">
-                  <div
-                    className="stat-bar-fill"
-                    style={{ width: `${Math.min(100, Math.max(0, Number(score) || 0))}%` }}
-                  />
+                  <div className="stat-bar-fill" style={{ width: `${stat.percentile}%` }} />
                 </div>
-                <span className="stat-value">{score}</span>
+                <span className="stat-badge">{stat.badge}</span>
+                <span className="stat-value">{stat.percentile}th</span>
               </div>
             ))}
           </div>
