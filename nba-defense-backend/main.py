@@ -7,7 +7,7 @@ app = FastAPI() # creates web application
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "https://nba-defense-frontend.vercel.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -27,6 +27,10 @@ TEAM_NAMES = {
 
 
 df = pd.read_csv('data/season_2025-26.csv')
+
+@app.get("/")
+def root():
+    return {"message": "NBA Defense Rater API is running", "endpoints": ["/players", "/players/{name}"]}
 
 def clean_player(row):
     return {
