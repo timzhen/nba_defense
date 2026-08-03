@@ -48,7 +48,8 @@ def clean_player(row):
         "shot_contesting_score": round(row['shot_contesting_score'], 1),
         "ball_disruption_score": round(row['ball_disruption_score'], 1),
         "on_ball_matchup_def_score": round(row['on_ball_matchup_def_score'], 1),
-        "def_reb_score": round(row['def_reb_score'], 1)
+        "def_reb_score": round(row['def_reb_score'], 1),
+        "player_id": int(row['PLAYER_ID']),
     }
 
 @app.get("/players") # this is a decorator. it tags function below this line. "/players" (GET requests) → get_all_players function
