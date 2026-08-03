@@ -7,7 +7,7 @@ app = FastAPI() # creates web application
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://nba-defense-frontend.vercel.app"],
+    allow_origins=["http://localhost:5173", "https://nba-defense.vercel.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
