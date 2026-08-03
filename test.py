@@ -27,3 +27,6 @@ for season in seasons_to_test:
     if df is not None:
         print(f'{season}: SUCCESS - {df.shape[0]} rows')
     time.sleep(10)  # extra pause between different seasons too
+
+df = pd.read_csv('data/all_seasons_combined.csv')
+print(df.shape)

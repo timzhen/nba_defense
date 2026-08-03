@@ -4,8 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 
-df = pd.read_csv('data/all_seasons_combined.csv')
-
+df = pd.read_csv('../data/all_seasons_combined.csv')
 
 """
 print(df[['rim_protection_score', 'shot_contesting_score', 'ball_disruption_score',
@@ -46,3 +45,11 @@ print('\nLearned weights per category:')
 for category, weight in zip(X.columns, model.coef_[0]): # zip pairs up each category name w its corresponding learned weight
     print(f'  {category}: {weight:.3f}')
     # which defensive skills most strongly correlate with real world DPOY recognition
+
+
+print(f'Loaded shape: {df.shape}')  # ADD THIS
+
+df = df[~df['SEASON'].isin(['2015-16', '2016-17'])]
+print(f'After season filter: {df.shape}')  # ADD THIS
+print(df['SEASON'].value_counts())  # ADD THIS - see which seasons are actually present
+
