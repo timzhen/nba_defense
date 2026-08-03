@@ -1,9 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+from google import genai
+
 
 import pandas as pd
+import os
 
 app = FastAPI() # creates web application
+
+load_dotenv()
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,4 +64,49 @@ def get_player(name: str):
     row = player.iloc[0]
     return clean_player(row)
 
+
+@app.get("/players/{name}/explain")
+def explain_player(name: str, question: str = "Why is this player ranked this way?"):
+    player = df[df['PLAYER_NAME'].str.lower() == name.lower()]
+    if player.empty:
+        return {"error": "Player not found"}
+    
+    row = player.iloc[0]
+    player_data = clean_player(row)
+    
+    full_context = {
+        "player_name": row['PLAYER_NAME'],
+        "team": TEAM_NAMES.get(row['TEAM_ABBREVIATION'], row['TEAM_ABBREVIATION']),
+        "blocks": row['BLK'],
+        "opponent_points_in_paint": row['OPP_PTS_PAINT'],
+        "defensive_rating": row['DEF_RATING'],
+        "deflections": row['DEFLECTIONS'],
+        "steals": row['STL'],
+        "charges_drawn": row['CHARGES_DRAWN'],
+        "defensive_rebounds": row['DREB'],
+        "defensive_boxouts": row['DEF_BOXOUTS'],
+        "opponent_fg_pct_allowed": row['avg_fg_pct_allowed'],
+        "rim_protection_score": round(row['rim_protection_score'], 1),
+        "shot_contesting_score": round(row['shot_contesting_score'], 1),
+        "ball_disruption_score": round(row['ball_disruption_score'], 1),
+        "on_ball_matchup_def_score": round(row['on_ball_matchup_def_score'], 1),
+        "def_reb_score": round(row['def_reb_score'], 1)
+    }
+
+    prompt = f"""You're a basketball analyst. Here is a player's defensive profile:
+
+{full_context}
+
+The user asked: "{question}"
+
+Answer using only the data provided above, in 2-3 sentences, in a aggresive tone. Rather than stating that this player has this the score, explain why he got this score with their raw stats"""
+
+    response = client.models.generate_content(
+        model='gemini-3.5-flash-lite',
+        contents=prompt
+    )
+    
+    return {"answer": response.text}
+
 # to run type this in terminal: uvicorn main:app --reload
+
