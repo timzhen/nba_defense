@@ -3,6 +3,8 @@ import { useState } from 'react'
 function App() {
   const [searchName, setSearchName] = useState('')
   const [player, setPlayer] = useState(null)
+  const [question, setQuestion] = useState('')
+  const [explanation, setExplanation] = useState('')
 
   const handleSearch = async () => {
     try {
@@ -11,6 +13,17 @@ function App() {
       setPlayer(data)
     } catch (error) {
       console.error('Error fetching player:', error)
+    }
+  }
+
+  const handleAskQuestion = async () => {
+    try {
+      const url = `https://nbadefense-production.up.railway.app/players/${encodeURIComponent(searchName)}/explain?question=${encodeURIComponent(question)}`
+      const response = await fetch(url)
+      const data = await response.json()
+      setExplanation(data.answer)
+    } catch (error) {
+      console.error('Error fetching explanation:', error)
     }
   }
 
@@ -33,6 +46,19 @@ function App() {
           <p>Ball Disruption: {player.ball_disruption_score}</p>
           <p>On-Ball Matchup: {player.on_ball_matchup_def_score}</p>
           <p>Defensive Rebounding: {player.def_reb_score}</p>      
+
+          <div>
+            <input
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Ask a question about this player..."
+            />
+            <button onClick={handleAskQuestion}>Ask</button>
+
+            {explanation && (
+              <p>{explanation}</p>
+            )}
+          </div>
         </div>
       )}
     </div>
