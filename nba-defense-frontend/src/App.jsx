@@ -1,15 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
+
+const API = window.location.hostname === 'localhost'
+  ? 'http://127.0.0.1:8000'
+  : 'https://nbadefense-production.up.railway.app'
 
 function App() {
   const [searchName, setSearchName] = useState('')
   const [player, setPlayer] = useState(null)
   const [question, setQuestion] = useState('')
   const [explanation, setExplanation] = useState('')
+  const [allPlayers, setAllPlayers] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [highlightIndex, setHighlightIndex] = useState(-1)
+  const blurTimeoutRef = useRef(null)
 
-  const handleSearch = async () => {
+  useEffect(() => {
+    fetch(`${API}/players`)
+      .then((r) => r.json())
+      .then(setAllPlayers)
+      .catch((error) => console.error('Error fetching players:', error))
+  }, [])
+
+  const suggestions = searchName.trim()
+    ? allPlayers
+        .filter((p) =>
+          p.player_name.toLowerCase().startsWith(searchName.trim().toLowerCase())
+        )
+        .slice(0, 8)
+    : []
+
+  const handleSearch = async (name = searchName) => {
+    const query = name.trim()
+    if (!query) return
+    setShowSuggestions(false)
+    setHighlightIndex(-1)
+    setQuestion('')
+    setExplanation('')
     try {
-      const response = await fetch(`https://nbadefense-production.up.railway.app/players/${encodeURIComponent(searchName)}`)
+      const response = await fetch(`${API}/players/${encodeURIComponent(query)}`)
       const data = await response.json()
       setPlayer(data)
       console.log(data)
@@ -18,9 +47,41 @@ function App() {
     }
   }
 
+  const selectPlayer = (name) => {
+    setSearchName(name)
+    setShowSuggestions(false)
+    setHighlightIndex(-1)
+    handleSearch(name)
+  }
+
+  const handleSearchKeyDown = (e) => {
+    if (!showSuggestions || suggestions.length === 0) {
+      if (e.key === 'Enter') handleSearch()
+      return
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setHighlightIndex((i) => (i + 1) % suggestions.length)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setHighlightIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1))
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      if (highlightIndex >= 0) {
+        selectPlayer(suggestions[highlightIndex].player_name)
+      } else {
+        handleSearch()
+      }
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false)
+      setHighlightIndex(-1)
+    }
+  }
+
   const handleAskQuestion = async () => {
     try {
-      const url = `https://nbadefense-production.up.railway.app/players/${encodeURIComponent(searchName)}/explain?question=${encodeURIComponent(question)}`
+      const url = `${API}/players/${encodeURIComponent(searchName)}/explain?question=${encodeURIComponent(question)}`
       const response = await fetch(url)
       const data = await response.json()
       setExplanation(data.answer)
@@ -47,13 +108,51 @@ function App() {
       </header>
 
       <div className="search-row">
-        <input
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleSearch() }}
-          placeholder="Search a player..."
-        />
-        <button onClick={handleSearch}>Search</button>
+        <div className="search-input-wrap">
+          <input
+            value={searchName}
+            onChange={(e) => {
+              setSearchName(e.target.value)
+              setShowSuggestions(true)
+              setHighlightIndex(-1)
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => {
+              blurTimeoutRef.current = setTimeout(() => {
+                setShowSuggestions(false)
+                setHighlightIndex(-1)
+              }, 150)
+            }}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search a player..."
+            autoComplete="off"
+            role="combobox"
+            aria-expanded={showSuggestions && suggestions.length > 0}
+            aria-autocomplete="list"
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="suggestions" role="listbox">
+              {suggestions.map((p, index) => (
+                <li
+                  key={p.player_id}
+                  role="option"
+                  aria-selected={index === highlightIndex}
+                  className={index === highlightIndex ? 'suggestion-active' : undefined}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    clearTimeout(blurTimeoutRef.current)
+                    selectPlayer(p.player_name)
+                  }}
+                  onMouseEnter={() => setHighlightIndex(index)}
+                >
+                  <span className="suggestion-name">{p.player_name}</span>
+                  <span className="suggestion-team">{p.team}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <button onClick={() => handleSearch()}>Search</button>
       </div>
 
       {player && (
