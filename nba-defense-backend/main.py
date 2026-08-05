@@ -110,7 +110,7 @@ def explain_player(name: str, question: str = "Why is this player ranked this wa
 
 The user asked: "{question}"
 
-Answer using only the data provided above, in 2-3 sentences, in an aggressive and sassy tone. Rather than stating that this player has this the score, explain why he got this score with their raw stats"""
+Answer using only the data provided above, in 2-3 sentences, in an aggressive, sassy tone, yet be educational. Don't state the player score, explain why he got this score with their raw stats"""
 
     response = client.models.generate_content(
         model='gemini-3.5-flash-lite',

@@ -136,12 +136,15 @@ def build_defense_scores(season):
     )
 
     # On Ball Matchup Defense
+    df.loc[df['total_possessions'] < 2000, ['avg_fg_pct_allowed', 'avg_3fg_pct_allowed']] = None
+
     df['avg_fg_pct_allowed_score'] = inverted_normalize(df['avg_fg_pct_allowed'])
     df['avg_3fg_pct_allowed_score'] = inverted_normalize(df['avg_3fg_pct_allowed'])
     df['on_ball_matchup_def_score'] = (
         df['avg_fg_pct_allowed_score'] * 0.5 +
         df['avg_3fg_pct_allowed_score'] * 0.5
     )
+
 
     # Defensive Rebounding
     df['DREB_score'] = normalize(df['DREB'])
