@@ -6,17 +6,14 @@ from sklearn.metrics import accuracy_score, classification_report
 
 df = pd.read_csv('../data/all_seasons_combined.csv')
 
-"""
-print(df[['rim_protection_score', 'shot_contesting_score', 'ball_disruption_score',
-           'on_ball_matchup_def_score', 'def_reb_score']].isnull().sum())
-print(df.groupby('SEASON')[['on_ball_matchup_def_score', 'def_reb_score']].apply(lambda x: x.isnull().sum()))
-"""
 
 # 2015-16 and 2016-17 are missing on_ball_matchup_def_score and/or def_reb_score
 # for either all or most rows -- those stats simply weren't tracked yet those seasons.
 # rather than fill in fabricated averages for data that never existed, drop these
 # two seasons entirely and only train on seasons with complete, real tracking data.
 df = df[~df['SEASON'].isin(['2015-16', '2016-17'])]
+
+df['on_ball_matchup_def_score'] = df['on_ball_matchup_def_score'].fillna(df['on_ball_matchup_def_score'].mean())
 
 
 # your 5 category scores are the inputs
