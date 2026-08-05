@@ -110,7 +110,7 @@ def explain_player(name: str, question: str = "Why is this player ranked this wa
 
 The user asked: "{question}"
 
-Answer using only the data provided above, in 2-3 sentences, in an aggressive, sassy tone, yet be educational. Don't state the player score, explain why he got this score with their raw stats"""
+Answer using only the data provided above, in 2-3 sentences, in an conversational and informative tone. Don't state the player score, explain why he got this score with their raw stats"""
 
     response = client.models.generate_content(
         model='gemini-3.5-flash-lite',
@@ -118,6 +118,21 @@ Answer using only the data provided above, in 2-3 sentences, in an aggressive, s
     )
     
     return {"answer": response.text}
+
+
+import joblib
+
+dpoy_model = joblib.load('dpoy_model.pkl')
+
+feature_cols = ['rim_protection_score', 'shot_contesting_score', 'ball_disruption_score',
+                 'on_ball_matchup_def_score', 'def_reb_score']
+
+df['dpoy_probability'] = dpoy_model.predict_proba(df[feature_cols].fillna(df[feature_cols].mean()))[:, 1]
+
+@app.get("/dpoy-leaderboard")
+def dpoy_leaderboard():
+    top = df.nlargest(10, 'dpoy_probability')[['PLAYER_NAME', 'dpoy_probability']]
+    return top.to_dict(orient='records')
 
 # to run type this in terminal: uvicorn main:app --reload
 

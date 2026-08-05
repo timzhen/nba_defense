@@ -11,7 +11,7 @@ df = pd.read_csv('../data/all_seasons_combined.csv')
 # for either all or most rows -- those stats simply weren't tracked yet those seasons.
 # rather than fill in fabricated averages for data that never existed, drop these
 # two seasons entirely and only train on seasons with complete, real tracking data.
-df = df[~df['SEASON'].isin(['2015-16', '2016-17'])]
+df = df[~df['SEASON'].isin(['2015-16', '2016-17', '2025-26'])]
 
 df['on_ball_matchup_def_score'] = df['on_ball_matchup_def_score'].fillna(df['on_ball_matchup_def_score'].mean())
 
@@ -50,3 +50,5 @@ df = df[~df['SEASON'].isin(['2015-16', '2016-17'])]
 print(f'After season filter: {df.shape}')  # ADD THIS
 print(df['SEASON'].value_counts())  # ADD THIS - see which seasons are actually present
 
+import joblib # standard tool to save trained scikit learn models to disk
+joblib.dump(model, '../nba-defense-backend/dpoy_model.pkl')
