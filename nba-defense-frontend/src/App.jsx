@@ -103,8 +103,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>NBA Defensive Rater</h1>
-        <p>Scouting report · defensive category grades</p>
+        <h1>NBA Defensive Scouting Report</h1>
+        <p>defensive category grades</p>
       </header>
 
       <div className="search-row">
