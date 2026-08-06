@@ -175,7 +175,7 @@ function App() {
                   <div className="stat-bar-fill" style={{ width: `${stat.percentile}%` }} />
                 </div>
                 <span className="stat-badge">{stat.badge}</span>
-                <span className="stat-value">{stat.percentile}th</span>
+                <span className="stat-value">{stat.percentile}th percentile</span>
               </div>
             ))}
           </div>

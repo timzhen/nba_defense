@@ -21,7 +21,7 @@
   --font-body: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  max-width: 640px;
+  max-width: 780px;
   margin: 0 auto;
   width: 100%;
   min-height: 100svh;
@@ -186,7 +186,7 @@
   border: 1px solid var(--hardwood-amber);
   border-radius: 2px;
   padding: 28px 28px 32px;
-  max-width: 640px;
+  max-width: 780px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
@@ -232,9 +232,9 @@
 
 .stat-row {
   display: grid;
-  grid-template-columns: minmax(110px, 140px) 1fr auto;
+  grid-template-columns: minmax(110px, 140px) 1fr 108px 16ch;
   align-items: center;
-  gap: 12px 16px;
+  gap: 12px 12px;
 }
 
 .stat-label {
@@ -247,6 +247,7 @@
 
 .stat-bar-track {
   height: 10px;
+  min-width: 0;
   background: rgba(21, 26, 31, 0.55);
   border: 1px solid rgba(198, 142, 78, 0.25);
   border-radius: 1px;
@@ -263,11 +264,11 @@
 
 .stat-value {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--off-white);
   letter-spacing: 0.02em;
-  min-width: 3.25ch;
+  white-space: nowrap;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -282,6 +283,8 @@
   background: #2a333c;
   color: #C68E4E;
   white-space: nowrap;
+  text-align: center;
+  justify-self: stretch;
 }
 
 .ask-section {
@@ -320,8 +323,8 @@
   }
 
   .stat-row {
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
+    grid-template-columns: 1fr 108px;
+    grid-template-rows: auto auto auto;
   }
 
   .stat-label {
@@ -329,7 +332,12 @@
   }
 
   .stat-bar-track {
+    grid-column: 1 / -1;
+  }
+
+  .stat-badge {
     grid-column: 1;
+    justify-self: start;
   }
 
   .stat-value {
