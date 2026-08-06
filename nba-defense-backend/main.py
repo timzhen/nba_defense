@@ -76,6 +76,20 @@ def clean_player(row):
 def get_all_players():
     return [clean_player(row) for _, row in df.iterrows()]
 
+@app.get("/teams")
+def get_teams():
+    teams = df[['TEAM_ID', 'TEAM_ABBREVIATION']].drop_duplicates()
+    teams['team_name'] = teams['TEAM_ABBREVIATION'].apply(lambda x: TEAM_NAMES.get(x, x))
+    teams['TEAM_ID'] = teams['TEAM_ID'].astype(int)
+    return teams.sort_values('team_name').to_dict(orient='records')
+
+@app.get("/teams/{team_abbr}/roster")
+def get_team_roster(team_abbr: str):
+    roster = df[df['TEAM_ABBREVIATION'].str.upper() == team_abbr.upper()]
+    if roster.empty:
+        return {"error": "Team not found"}
+    return [clean_player(row) for _, row in roster.iterrows()]
+
 @app.get("/players/{name}")
 def get_player(name: str):
     player = df[df['PLAYER_NAME'].str.lower() == name.lower()]
@@ -121,8 +135,12 @@ def explain_player(name: str, question: str = "Why is this player ranked this wa
 
 The user asked: "{question}"
 
-Answer using only the data provided above, in 2-3 sentences, in an conversational and informative tone. Don't state the player score, explain why he got this score with their raw stats. Explain the player's biggest strength, how is he best optimally used schematically by teams, and weakness (if they actually have one).
-Weakness could be high opponent fg pct allowed and points, age (only older players). Dont mention to the reader but think about the player's positional job (if they're a guard it is okay if they dont have a lot of rebounds compared to forwards and centers) and how that may affect how they are best utilized on the court schematically"""
+Answer using only the data provided above, in 2-3 sentences, in an conversational and informative tone. Don't state the player score, 
+explain why he got this score with their raw stats. Explain the player's biggest strength, how is he best optimally used schematically by teams, and weakness (if they actually have one).
+Weakness could be high opponent fg pct allowed and points, age (only older players). Dont mention to the reader but think about the player's positional job (if they're a guard it is okay 
+if they dont have a lot of rebounds compared to forwards and centers) and how that may affect how they are best utilized on the court schematically. Try to match the vibe of the user, if the user jokes with you, joke back
+if the user ever compares amen vs ausar, breakdown the difference between them but always mention that amen is way more handsome and chiseled 
+if the user asks non defensive related questions just answer the question without defensive breakdown. if the user doesnt ask anything in the chat, explain what you can do"""
 
     response = client.models.generate_content(
         model='gemini-3.5-flash-lite',
@@ -143,8 +161,14 @@ df['dpoy_probability'] = dpoy_model.predict_proba(df[feature_cols].fillna(df[fea
 
 @app.get("/dpoy-leaderboard")
 def dpoy_leaderboard():
-    top = df.nlargest(10, 'dpoy_probability')[['PLAYER_NAME', 'dpoy_probability']]
-    return top.to_dict(orient='records')
+    top = df.nlargest(10, 'dpoy_probability')[
+        ['PLAYER_ID', 'PLAYER_NAME', 'TEAM_ABBREVIATION', 'dpoy_probability']
+    ].copy()
+    top['team'] = top['TEAM_ABBREVIATION'].apply(lambda x: TEAM_NAMES.get(x, x))
+    top['dpoy_probability'] = (top['dpoy_probability'] * 100).round(2)
+    return top[['PLAYER_ID', 'PLAYER_NAME', 'team', 'dpoy_probability']].rename(
+        columns={'PLAYER_ID': 'player_id', 'PLAYER_NAME': 'player_name'}
+    ).to_dict(orient='records')
 
 # to run type this in terminal: uvicorn main:app --reload
 

@@ -181,6 +181,211 @@
   transform: translateY(1px);
 }
 
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #2a333c;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  color: #6B7280;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.9rem;
+  padding: 12px 18px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s ease;
+}
+
+.tab-button:hover {
+  color: #EDEAE3;
+}
+
+.tab-button.active {
+  color: #E8590C;
+  border-bottom: 3px solid #E8590C;
+}
+
+.teams-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+}
+
+.team-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1a2229;
+  border: 1px solid #2a333c;
+  color: #EDEAE3;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease;
+}
+
+.team-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.team-button:hover {
+  border-color: #C68E4E;
+}
+
+.team-button.active {
+  border-color: #E8590C;
+  color: #E8590C;
+}
+
+.roster-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--hardwood-amber);
+}
+
+.roster-list {
+  background: #1a2229;
+  border: 1px solid #2a333c;
+  border-radius: 6px;
+  padding: 8px 20px;
+}
+
+.roster-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #2a333c;
+  font-size: 0.85rem;
+}
+
+.roster-row:last-child {
+  border-bottom: none;
+}
+
+.roster-row:hover {
+  background: #202a33;
+}
+
+.roster-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.roster-score {
+  font-family: 'JetBrains Mono', monospace;
+  color: #6B7280;
+  font-size: 0.8rem;
+}
+
+.back-button {
+  margin-bottom: 16px;
+  padding: 8px 14px;
+  border: 1px solid #2a333c;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--slate-gray);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.back-button:hover {
+  color: var(--off-white);
+  border-color: var(--hardwood-amber);
+}
+
+.search-error {
+  margin: 0 0 24px;
+  color: var(--slate-gray);
+  font-size: 0.9rem;
+}
+
+.leaderboard-card {
+  background: #1a2229;
+  border: 1px solid #2a333c;
+  border-left: 4px solid #E8590C;
+  border-radius: 6px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+}
+
+.leaderboard-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0 0 4px;
+}
+
+.leaderboard-subtitle {
+  color: #6B7280;
+  font-size: 0.85rem;
+  margin: 0 0 20px;
+  line-height: 1.4;
+}
+
+.leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #2a333c;
+}
+
+.leaderboard-row:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #C68E4E;
+  width: 24px;
+}
+
+.leaderboard-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.leaderboard-team {
+  color: #6B7280;
+  font-size: 0.85rem;
+}
+
+.leaderboard-prob {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #E8590C;
+  width: 70px;
+  text-align: right;
+}
+
 .player-card {
   background: var(--court-blue);
   border: 1px solid var(--hardwood-amber);
