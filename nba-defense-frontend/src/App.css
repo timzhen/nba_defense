@@ -232,7 +232,7 @@
 
 .stat-row {
   display: grid;
-  grid-template-columns: minmax(110px, 140px) 1fr 108px 16ch;
+  grid-template-columns: minmax(110px, 140px) 1fr 136px 16ch;
   align-items: center;
   gap: 12px 12px;
 }
@@ -274,6 +274,8 @@
 }
 
 .stat-badge {
+  width: 136px;
+  box-sizing: border-box;
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -323,7 +325,7 @@
   }
 
   .stat-row {
-    grid-template-columns: 1fr 108px;
+    grid-template-columns: 1fr 136px;
     grid-template-rows: auto auto auto;
   }
 
