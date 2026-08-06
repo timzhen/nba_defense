@@ -1,4 +1,4 @@
-# NBA Defensive Rater
+# NBA Defensive Scouting Report
 
 A full-stack web app that rates NBA players across five distinct defensive categories, validates those ratings against real historical Defensive Player of the Year (DPOY) voting using a trained machine learning model, and lets users ask an AI chatbot to explain any player's rating using their actual underlying stats.
 
